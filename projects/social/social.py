@@ -1,3 +1,7 @@
+import random
+import string
+
+
 class User:
     def __init__(self, name):
         self.name = name
@@ -7,6 +11,11 @@ class SocialGraph:
         self.last_id = 0
         self.users = {}
         self.friendships = {}
+
+    def num_users(self):
+        return len(self.users)
+    def num_friendships(self):
+        return len(self.friendships)
 
     def add_friendship(self, user_id, friend_id):
         """
@@ -38,15 +47,35 @@ class SocialGraph:
 
         The number of users must be greater than the average number of friendships.
         """
+
+
         # Reset graph
         self.last_id = 0
         self.users = {}
         self.friendships = {}
+        name = 'a'
         # !!!! IMPLEMENT ME
 
-        # Add users
 
+
+        # Add users
+        for num in range(0, num_users):
+            name += 'a'
+            if name not in self.users.values():
+                self.add_user(name)
         # Create friendships
+        #need a way to find the average freinds per user.jhm
+        while self.num_users() + self.num_friendships()/ self.num_users()  <= avg_friendships:
+            user_id = random.randint(1, self.num_users())
+            friend_id = random.randint(1, self.num_friendships())
+            if user_id == friend_id:
+                print("nope")
+            elif friend_id in self.friendships[user_id] or user_id in self.friendships[friend_id]:
+                print("nope")
+            else:
+                self.add_friendship(user_id, friend_id)
+            print(self.friendships)
+
 
     def get_all_social_paths(self, user_id):
         """

@@ -3,6 +3,8 @@ Simple graph implementation
 """
 from util import Stack, Queue  # These may come in handy
 
+from collections import deque
+
 class Graph:
 
     """Represent a graph as a dictionary of vertices mapping labels to edges."""
@@ -50,16 +52,17 @@ class Graph:
         #load the starting vertex into the que
         queue.enqueue(starting_vertex)
         #while the queue has a length
-        while len(queue.queue) > 0:
+        while queue.size() > 0:
             #remove the first node put in the list and set it to current node
             #print(f'queue before pop: {queue.queue}')
             currNode = queue.popleft()
-            #print(f'queue after pop: {queue.queue}')
+            #m,print(f'queue after pop: {queue.queue}')
             #if the node has not been visited
             if currNode not in visited:
                 #add the node to visited
-                visited.add(currNode)
+
                 print(currNode)
+                visited.add(currNode)
                 #check the neighbors of the current node
                 for neighbor in self.get_neighbors(currNode):
                     #if they are havent been visited add them to the path, and put them in the queue
@@ -82,7 +85,7 @@ class Graph:
         #set up variable for returning the path
         path = []
         #if there is a length to the stack continue
-        while len(stack.stack) > 0:
+        while len(stack.size()) > 0:
             #remove current node in stack and set currNode = to the value of that node
             currNode = stack.pop()
             print(currNode)
@@ -118,7 +121,38 @@ class Graph:
 
 
 
-
+    def bfs(self, starting_vertex, destination_vertex):
+        """
+        Return a list containing the shortest path from
+        starting_vertex to destination_vertex in
+        breath-first order.
+        """
+        #setting up
+        visited = set()
+        queue = deque()
+        queue.append([starting_vertex])
+        #while the queue has an element
+        while len(queue) > 0:
+            #set the current path
+            currPath = queue.popleft()
+            #set the current node to the last thing appended to the path
+            currNode = currPath[-1]
+            #if the node is the destination return
+            if currNode == destination_vertex:
+                return currPath
+            #if the node has not been visited
+            if currNode not in visited:
+                #add to set
+                visited.add(currNode)
+                #check neighbors
+                for neighbor in self.vertices[currNode]:
+                    #add each neighbor as the next node in the path to the queue so the queue should look like This
+                    #queue = [[1,2],[1,2,3],[1,2,3,4]]
+                    #evaluate which path provides us with the destination.
+                    newPath = list(currPath)
+                    newPath.append(neighbor)
+                    queue.append(newPath)
+        return []
 
 
     def dft_recursive(self, starting_vertex):
@@ -128,8 +162,8 @@ class Graph:
 
         This should be done using recursion.
         establish a base case (when to return from your function)
-            when you find the node return that currNode
-            when you dont find the node return an empty set
+        when you find the node return that currNode
+        when you dont find the node return an empty set
         establish a recurse case(when to recurse)
 
 
@@ -141,37 +175,27 @@ class Graph:
         return self.dft_recursive_helper([starting_vertex], visited)
         # TODO
 
-    def bfs(self, starting_vertex, destination_vertex):
-        """
-        Return a list containing the shortest path from
-        starting_vertex to destination_vertex in
-        breath-first order.
-        search works but i need to find a way to find the shortest path and track it in a list preferably in one pass
-        """
-        visited = set()
-        queue = Queue()
-        queue.enqueue([starting_vertex])
-        #if the starting_vertex is the destination
-        if starting_vertex  ==  destination_vertex:
-            return [starting_vertex], destination_vertex
-        #otherwise start while loop
-        while len(queue.queue) > 0:
-            #set the current operating node to the first thing in the queue
-            currPath = queue.popleft()
-            currNode = currPath[-1]
-            #check if this node has been visited and idd it if not
-            if currNode not in visited:
-
-                #check neighbors of currNode
-                for neighbor in self.get_neighbors(currNode):
-                    print(f'get_neighbors: {self.get_neighbors(currNode)}')
-                    newPath = list(currPath)
-                    newPath.append(neighbor)
-                    queue.enqueue(neighbor)
-                    #if the neighbors havent been visited
-                    if neighbor == destination_vertex:
-                        return newPath, neighbor
-            visited.add(currNode)
+        def bfs(self, starting_vertex, destination_vertex):
+            """
+            Return a list containing the shortest path from
+            starting_vertex to destination_vertex in
+            breath-first order.
+            """
+            visited = set()
+            queue = deque()
+            queue.append([starting_vertex])
+            while len(queue) > 0:
+                currPath = queue.popleft()
+                currNode = currPath[-1]
+                if currNode == destination_vertex:
+                    return currPath
+                if currNode not in visited:
+                    visited.add(currNode)
+                    for neighbor in self.vertices[currNode]:
+                        newPath = list(currPath)
+                        newPath.append(neighbor)
+                        queue.append(newPath)
+            return []
 
 
 
@@ -296,8 +320,9 @@ if __name__ == '__main__':
         1, 2, 4, 7, 6, 3, 5
         1, 2, 4, 6, 3, 5, 7
     '''
-    graph.dft(1)
-    print(f'recursove: {graph.dft_recursive(1)}')
+    print(f'graph.dft(1)')
+
+    print(f'dft recursinve: {graph.dft_recursive(1)}')
 
     '''
     Valid BFS path:
@@ -310,5 +335,5 @@ if __name__ == '__main__':
         [1, 2, 4, 6]
         [1, 2, 4, 7, 6]
     '''
-    print(graph.dfs(1, 6))
-    print(graph.dfs_recursive(1, 6))
+    print(f'dfs: {graph.dfs(1, 6)}')
+    print(f'dfs recursive: {graph.dfs_recursive(1, 6)}')
